@@ -94,7 +94,6 @@ def main(user_data):
 
 
     if(user_data.max_dl_speed):
-
         print(
             f"Your location: {user_data.location}': download speed {user_data.max_dl_speed}Mb/s\n"
             f"Average download speed of country: {int(avg)}Mb/s.\n"
