@@ -32,5 +32,5 @@ speed against a barchart / scatter graph to indicate in a more visual way how th
 
 I have elected to only represent a small amount of the data but the tool allows for easy feature addition.
 
-
+I have decided due to the fact this is a tool I have kept the file structure flat. 
 

@@ -1,9 +1,10 @@
-from typing import Dict, List
+from typing import Dict, List, Union
 import contextlib
 import pandas
 import os
 import sqlite3
 from dataclasses import dataclass
+
 
 """The main purpose is to create a data lookup and visualisation tool for
 which can be used by technicians. You're free to choose between
@@ -11,20 +12,22 @@ console task, web application or even GUI if you like."""
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
-"""Dataclass for typehints such that it's obvious what's coming in from the CLI arguments"""
+
 @dataclass
 class Inputdata:
-    report: str = ""
+    """Dataclass for typehints such that it's obvious what's coming in from the CLI arguments"""
+    report: str = "full"
     location: str = ""
     comparison_location: str = ""
     max_dl_speed: int = 0
     min_dl_speed: int = 0
     min_ul_speed: int = 0
     max_ul_speed: int = 0
+    csv = ""
 
 
 """Convert more memorable names to database names"""
-translations = {"location": "laua_name",
+translations = {"location": "",
                 "max_dl_speed": "Maximum download speed (Mbit/s)",
                 "min_dl_speed": "Minimum download speed (Mbit/s)",
                 "max_ul_speed": "Maximum upload speed (Mbit/s)",
@@ -35,14 +38,17 @@ translations = {"location": "laua_name",
 
 
 class Database:
-    def __init__(self, dataset: str):
-        self.dataset = dataset
+    def __init__(self):
+        pass
 
     @staticmethod
-    def load_csv():
-        path_to_file = ROOT_DIR + "/fixed_data.csv"
-        print(path_to_file)
-        dataset = pandas.read_csv(path_to_file, encoding="ISO-8859-1")
+    def load_csv(filename):
+        dataset = pandas.read_csv(filename, encoding="ISO-8859-1")
+
+        if hasattr(dataset, 'laua_name'):
+            translations['location'] = "laua_name"
+        elif hasattr(dataset, 'la_name'):
+            translations['location'] = "la_name"
 
         with contextlib.closing(sqlite3.connect('locations.sqlite')) as conn:
             dataset.to_sql("dataset", conn, if_exists='replace')
@@ -52,7 +58,7 @@ class Database:
         # load both / one.
 
     @staticmethod
-    def get_data(name, where="") -> List[dict]:
+    def get_data(name, where=""):
         # simply pass the sql query to be executed and return the results.
         with contextlib.closing(sqlite3.connect('locations.sqlite')) as conn:
             conn.row_factory = sqlite3.Row
@@ -74,7 +80,7 @@ class Database:
                 return c.fetchall()
 
 
-def calc_avg(data: List[dict]):
+def calc_avg(data: List) -> float:
     accum = 0
     for x in data:
         for y in x:
@@ -83,16 +89,14 @@ def calc_avg(data: List[dict]):
     return accum / len(data)
 
 
-def get_value(data: List[dict], name: str):
+def get_value(data: Dict, name: str) -> Union[int, str, float]:
     return data[translations.get(name)]
 
 
 def main(user_data):
     print(user_data.location)
-    database = Database("none")
-    database.load_csv()
-
-    #TODO Add more data manipulation based on the parameters supplied.
+    database = Database()
+    database.load_csv(user_data.csv)
 
     location = database.get_data(name="location", where=user_data.location)
 
@@ -115,7 +119,6 @@ def main(user_data):
             f"Min upload speed of {user_data.location.capitalize()}: {get_value(location, 'min_ul_speed')}Mb/s\n"
         )
 
-
     if(user_data.comparison_location):
         compare_location = database.get_data(name="location", where=user_data.comparison_location)
         print(
@@ -128,7 +131,7 @@ def parse_args():
     import argparse
     parser = argparse.ArgumentParser(description="Internet speed and bandwidth comparison tool")
     parser.add_argument("-f", dest="csv", help="location of the CSV to load", required=True, type=str)
-    parser.add_argument("-l", "--location", dest="location", help="The location to perform internet "
+    parser.add_argument("-l", "--location", nargs='+', dest="location", help="The location to perform internet "
                                                                   "analysis. E.g. Leicester", type=str, required=True)
     parser.add_argument("-d", "--max_download_speed", dest="max_dl_speed", help="Maximum download speed Mb/s "
                         "this connection e.g 50", type=int)
@@ -142,6 +145,7 @@ def parse_args():
 
     userdata = Inputdata()
     parser.parse_args(namespace=userdata)
+    userdata.location = ' '.join(userdata.location)
     return userdata
 
 
