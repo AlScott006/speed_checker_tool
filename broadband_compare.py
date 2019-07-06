@@ -101,19 +101,27 @@ def main(user_data):
         dl_speed_all = database.get_data(name="avg_dl_speed")
         print(
             f"Average download speed of country: {int(calc_avg(dl_speed_all))}Mb/s.\n"
-            f"Average download speed of {user_data.location.capitalize()}: {get_value(location, 'avg_dl_speed')}Mb/s\n")
+            f"Average download speed of {user_data.location.capitalize()}: {get_value(location, 'avg_dl_speed')}Mb/s\n"
+            f"Max download speed of {user_data.location.capitalize()}: {get_value(location, 'max_dl_speed')}Mb/s\n"
+            f"Min download speed of {user_data.location.capitalize()}: {get_value(location, 'min_dl_speed')}Mb/s\n"
+        )
 
     if(user_data.max_ul_speed or user_data.report == "full"):
         ul_speed_all = database.get_data(name="avg_ul_speed")
         print(
             f"Average upload speed of country: {int(calc_avg(ul_speed_all))}Mb/s.\n"
             f"Average upload speed of {user_data.location.capitalize()}: {get_value(location, 'avg_ul_speed')}Mb/s\n"
+            f"Max upload speed of {user_data.location.capitalize()}: {get_value(location, 'max_ul_speed')}Mb/s\n"
+            f"Min upload speed of {user_data.location.capitalize()}: {get_value(location, 'min_ul_speed')}Mb/s\n"
         )
+
 
     if(user_data.comparison_location):
         compare_location = database.get_data(name="location", where=user_data.comparison_location)
         print(
-            f"Average download speed of {user_data.comparison_location}: {get_value(compare_location,'avg_dl_speed')}Mb/s")
+            f"Average download speed of {user_data.comparison_location}: "
+            f"{get_value(compare_location,'avg_dl_speed')}Mb/s"
+        )
 
 
 def parse_args():
