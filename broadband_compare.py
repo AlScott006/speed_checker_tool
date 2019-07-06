@@ -33,6 +33,7 @@ translations = {"location": "laua_name",
                 "avg_ul_speed": "Average upload speed (Mbit/s)",
                 }
 
+
 class Database:
     def __init__(self, dataset: str):
         self.dataset = dataset
