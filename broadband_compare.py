@@ -135,9 +135,9 @@ def parse_args():
                                                                   "analysis. E.g. Leicester", type=str, required=True)
     parser.add_argument("-d", "--max_download_speed", dest="max_dl_speed", help="Maximum download speed Mb/s "
                         "this connection e.g 50", type=int)
-    parser.add_argument("--min_download_speed", dest="min_dl_speed", help="Minumum speed in Mb/s.", type=int)
+    parser.add_argument("--min_download_speed", dest="min_dl_speed", help="Minimum download speed in Mb/s.", type=int)
     parser.add_argument("-u", "--max_upload_speed", dest="max_ul_speed", help="Maximum upload speed in Mb/s", type=int)
-    parser.add_argument("--min_upload_speed", dest="max_ul_speed", help="Maximum upload speed in Mb/s", type=int)
+    parser.add_argument("--min_upload_speed", dest="max_ul_speed", help="Minimum upload speed in Mb/s", type=int)
 
     parser.add_argument("--compare", dest="comparison_location", type=str, help="If supplied will compare your location"
                                                                                 "to another location.")
