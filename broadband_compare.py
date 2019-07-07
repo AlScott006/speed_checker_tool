@@ -4,7 +4,7 @@ import pandas
 import os
 import sqlite3
 from dataclasses import dataclass
-
+import unittest as test
 
 """The main purpose is to create a data lookup and visualisation tool for
 which can be used by technicians. You're free to choose between
@@ -151,3 +151,20 @@ def parse_args():
 
 if __name__ == '__main__':
     main(parse_args())
+
+
+class Testavg(test.TestCase):
+
+    def test_avg(self):
+        r = [[1, 2, 3, 4, 5]]
+
+        val = 0
+        for x in r:
+            for y in x:
+                val += y
+
+        val = val / len(r)
+
+        self.assertEqual(calc_avg(r), val)
+
+
